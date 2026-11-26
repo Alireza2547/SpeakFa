@@ -1,4 +1,5 @@
 (() => {
+  // English pronunciation engine for SpeakFa
   const { MARK, loadLexicon, fetchJSON } = self.Common;
 
   const WEAK_FA = { the: 'ذِ', to: 'تِ', of: 'آو' };
