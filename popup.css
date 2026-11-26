@@ -1,0 +1,13 @@
+body { width: 290px; margin: 0; padding: 16px; color: #20242b; background: #fff; font: 13px/1.8 Tahoma, Arial, sans-serif; }
+h1 { margin: 0 0 8px; font-size: 16px; }
+p { margin: 7px 0 12px; color: #566170; }
+.sample { padding: 11px; border: 1px solid #dce3e9; border-radius: 10px; display: grid; gap: 3px; }
+.sample strong { direction: ltr; text-align: left; font-size: 19px; }
+.sample b { color: #087f5b; font-size: 20px; }
+.sample span, .note { font-size: 11px; }
+button { width: 100%; border: 0; border-radius: 8px; background: #087f5b; color: white; padding: 9px; cursor: pointer; font: inherit; }
+#helpText { margin-top: 10px; color: #46515e; }
+.toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; }
+.toggle input { width: 16px; height: 16px; accent-color: #087f5b; }
+.field { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.field select { flex: 1; max-width: 160px; padding: 5px 6px; border: 1px solid #dce3e9; border-radius: 7px; background: #fff; color: inherit; font: inherit; }

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تلفظ انگلیسی و فرانسوی به فارسی</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <main>
+    <h1>تلفظ انگلیسی و فرانسوی به فارسی</h1>
+    <label class="toggle"><input type="checkbox" id="enabled"><span>فعال بودن افزونه</span></label>
+    <label class="toggle"><input type="checkbox" id="sentences"><span>نمایش تلفظ جمله‌ها</span></label>
+    <label class="field"><span>زبان</span>
+      <select id="lang">
+        <option value="auto">تشخیص خودکار</option>
+        <option value="en">انگلیسی</option>
+        <option value="fr">فرانسوی</option>
+      </select>
+    </label>
+    <p>یک کلمه یا جمله را در صفحه انتخاب (Select) کن تا تلفظ نمایش داده شود.</p>
+
+    <p class="note">تلفظ فارسی به‌صورت محلی و از IPA دیکشنری داخل افزونه ساخته می‌شود؛ فقط معنی و صدای کلمه به اینترنت
+      نیاز دارند.</p>
+    <button id="help">راهنمای نصب و استفاده</button>
+    <div id="helpText" hidden>این افزونه را در chrome://extensions فعال کن. در صفحه‌هایی که از قبل باز بوده‌اند، صفحه را
+      Refresh کن. با دابل‌کلیک یا کشیدن موس روی یک کلمه یا جمله (حداکثر ۲۰ کلمه) آن را انتخاب کن. با کلید Esc یا کلیک
+      بیرون از کادر، کادر بسته می‌شود. در حالت «تشخیص خودکار» زبان از حروف، کلمات رایج و زبان صفحه حدس زده می‌شود. بعضی
+      صفحات داخلی Chrome و فروشگاه افزونه‌ها اجازه اجرای افزونه را نمی‌دهند.</div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+
+</html>
