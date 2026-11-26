@@ -215,11 +215,6 @@
 
   document.addEventListener('mousemove', event => {
     lastMouse = { x: event.clientX, y: event.clientY };
-    if (!isTooltipVisible()) return;
-    if (host && event.composedPath().includes(host)) return;
-    anchorRange = null;
-    anchorPoint = { x: event.clientX + window.scrollX, y: event.clientY + window.scrollY };
-    queueReposition();
   }, { passive: true, capture: true });
 
   document.addEventListener('scroll', queueReposition, { passive: true, capture: true });
