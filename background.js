@@ -13,7 +13,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const handlers = {
     LOOKUP_WORD: m => lookupAuto(m.word, m.pageLang),
     LOOKUP_TEXT: m => lookupText(m.text, m.pageLang),
-    LOOKUP_EXTRA: m => lookupExtra(m)
+    LOOKUP_EXTRA: m => lookupExtra(m),
+    SPEAK_OFFLINE: m => speakOffline(m),
+    STOP_OFFLINE: () => stopOffline()
   };
   const handler = handlers[message?.type];
   if (!handler) return;
@@ -232,4 +234,29 @@ async function loadExtra(original, word, lang) {
     try { await chrome.storage.local.set({ [key]: result }); } catch { }
   }
   return result;
+}
+
+async function hasOffscreen() {
+  const contexts = await chrome.runtime.getContexts({
+    contextTypes: ['OFFSCREEN_DOCUMENT'],
+    documentUrls: [chrome.runtime.getURL('offscreen.html')]
+  });
+  return contexts.length > 0;
+}
+
+async function speakOffline({ text, lang, rate }) {
+  if (!(await hasOffscreen())) {
+    await chrome.offscreen.createDocument({
+      url: 'offscreen.html',
+      reasons: ['AUDIO_PLAYBACK'],
+      justification: 'Offline speech synthesis'
+    });
+  }
+  await chrome.runtime.sendMessage({ type: 'OFFSCREEN_SPEAK', text, lang, rate });
+  return { ok: true };
+}
+
+async function stopOffline() {
+  if (await hasOffscreen()) await chrome.runtime.sendMessage({ type: 'OFFSCREEN_STOP' });
+  return { ok: true };
 }

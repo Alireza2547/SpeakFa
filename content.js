@@ -327,27 +327,48 @@
     const el = createTooltip();
     const word = el.dataset.word;
     const lang = el.dataset.lang;
-    if (kind === 'slow') {
-      speakText(word, lang === 'fr' ? TTS_LANG.fr : TTS_LANG.us, 0.6);
-      return;
-    }
-    const url = kind === 'uk' ? el.dataset.ukAudio : el.dataset.usAudio;
-    const fallback = () => speakText(word, TTS_LANG[kind] || TTS_LANG.us, 1);
-    if (url) {
+    const slow = kind === 'slow';
+    const ttsLang = slow ? (lang === 'fr' ? TTS_LANG.fr : TTS_LANG.us) : (TTS_LANG[kind] || TTS_LANG.us);
+    const rate = slow ? 0.6 : 1;
+    const url = slow ? '' : (kind === 'uk' ? el.dataset.ukAudio : el.dataset.usAudio);
+    const fallback = () => {
+      if (speakText(word, ttsLang, rate, !navigator.onLine)) return;
+      speakOffline(word, ttsLang, rate);
+    };
+    if (url && navigator.onLine) {
       const audio = new Audio(url);
       audio.play().catch(fallback);
     } else fallback();
   }
 
-  function speakText(text, lang, rate) {
+  function speakOffline(text, lang, rate) {
     const spoken = String(text || '').replace(/\(\p{Ll}{1,4}\)/gu, '');
-    if (!spoken || !('speechSynthesis' in window)) return;
+    if (!spoken || !chrome.runtime?.id) return;
+    chrome.runtime.sendMessage({ type: 'SPEAK_OFFLINE', text: spoken, lang, rate }).catch(() => { });
+  }
+
+  function pickLocalVoice(lang) {
+    const base = lang.slice(0, 2);
+    const voices = speechSynthesis.getVoices().filter(voice => voice.localService);
+    const norm = voice => voice.lang.replace('_', '-');
+    return voices.find(voice => norm(voice) === lang) || voices.find(voice => norm(voice).startsWith(base)) || null;
+  }
+
+  function speakText(text, lang, rate, localOnly = false) {
+    const spoken = String(text || '').replace(/\(\p{Ll}{1,4}\)/gu, '');
+    if (!spoken || !('speechSynthesis' in window)) return false;
+    const voice = pickLocalVoice(lang);
+    if (localOnly && !voice) return false;
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(spoken);
     utterance.lang = lang;
     utterance.rate = rate;
+    if (voice) utterance.voice = voice;
     speechSynthesis.speak(utterance);
+    return true;
   }
+
+  if ('speechSynthesis' in window) speechSynthesis.getVoices();
 
   function hideTooltip() {
     requestToken++;
@@ -355,5 +376,6 @@
     anchorPoint = null;
     if (tooltip) tooltip.style.display = 'none';
     if ('speechSynthesis' in window) speechSynthesis.cancel();
+    if (chrome.runtime?.id) chrome.runtime.sendMessage({ type: 'STOP_OFFLINE' }).catch(() => { });
   }
 })();
