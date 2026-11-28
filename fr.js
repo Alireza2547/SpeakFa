@@ -16,6 +16,8 @@
 
   const FR_OVERRIDES = {
     est: 'ɛ',
+    cheville: 'ʃəvij',
+    chevilles: 'ʃəvij',
     également: 'eɡaləmɑ\u0303',
     et: 'e',
     es: 'ɛ',
@@ -112,7 +114,7 @@
   }
 
   function frenchIpaToPersian(value) {
-    const ipa = cleanFrenchIPA(value);
+    const ipa = cleanFrenchIPA(value).replace(/ij$/, 'j');
     if (!ipa) return '';
 
     let output = '';
