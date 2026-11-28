@@ -16,6 +16,7 @@
 
   const FR_OVERRIDES = {
     est: 'ɛ',
+    également: 'eɡaləmɑ\u0303',
     et: 'e',
     es: 'ɛ',
     'a-t-elle': 'atɛl',
@@ -122,6 +123,7 @@
         let replacement = medial;
         if (i === 0 && initial !== undefined) replacement = initial;
         else if (i > 0 && i + phoneme.length >= ipa.length && final !== undefined) replacement = final;
+        if (phoneme.includes('\u0303') && 'bpm'.includes(ipa[i + phoneme.length] || '#')) replacement = replacement.replace(/ن$/, 'م');
         if (replacement === 'غ' && (FR_VOICELESS.includes(ipa[i - 1] || ' ') || FR_VOICELESS.includes(ipa[i + 1] || ' '))) replacement = 'خ';
         output += replacement;
         i += phoneme.length;
@@ -341,6 +343,14 @@
 
   function refine(items) {
     dropLatentConsonants(items);
+    for (let i = 0; i < items.length - 1; i++) {
+      const item = items[i];
+      const next = items[i + 1];
+      if (item.lang !== 'fr' || next.lang !== 'fr' || item.token.toLowerCase() !== 'de') continue;
+      if (!next.ipa || FR_VOWELS.includes(next.ipa[0]) || MARK.brk.test(next.gap)) continue;
+      item.fa = 'دو';
+      item.linked = true;
+    }
     for (let i = 0; i < items.length - 1; i++) {
       if (items[i].lang !== 'fr' || items[i + 1].lang !== 'fr') continue;
       const consonant = getLiaisonConsonant(items[i].token, items[i].ipa, items[i + 1].ipa, items[i + 1].gap);
